@@ -1,12 +1,17 @@
 import pandas as pd
-movies = pd.read_csv("imdb_popular_dataset.csv")
-movies = movies[movies['numVotes'] >= 10000]
-top10ByRating = movies.sort_values(by="averageRating", ascending=False).head(10)
-top10ByNumberOfVotes = movies.sort_values(by="numVotes", ascending=False).head(10)
+movies_and_tvShows = pd.read_csv("imdb_popular_dataset.csv")
+movies_and_tvShows = movies_and_tvShows[movies_and_tvShows['numVotes'] >= 50000]
+
+movies = movies_and_tvShows[movies_and_tvShows['titleType'] == "movie"]
+tvShows = movies_and_tvShows[movies_and_tvShows['titleType'].isin(["tvSeries", "tvMiniSeries"])]
+
+sortValue = ""
+mediaType = ""
+mediaName = ""
+
 
 intro = True
 askUserInput = True
-
 
 while True:
     if (intro):
@@ -15,25 +20,65 @@ while True:
     
     
     if (askUserInput):
-        value = input("What would you like to do?\n1.List top 10 movies/tv shows in a chosen category\n2.Recommend a movie based on input\n3.Info about a movie\n\nPlease type in the corresponding number for the option chosen.")
+        value = input("\nWhat would you like to do?\n\n1.List top movies/tv shows in a chosen category\n2.Recommend a movie based on input\n3.Info about a movie\n\nPlease type in the corresponding number for the option chosen.")
         askUserInput = False
        
     
         match value:
             case "1":
-                categoryRanking = input("\nHow would you like to sort the top 10 movies/tv shows?\n1. Rating\n2. Number of voters\nPlease type in the corresponding number for the option chosen.")
                 
-                if categoryRanking == 'b':
+                while True: 
+                    mediaType = input("\nWhat media type would you like to sort by?\n1. Movies\n2. Tv Shows\n3. Both\n\nPlease type in the corresponding number for the option chosen.")
+                    
+                    match mediaType:
+                        
+                        case "1": 
+                            mediaType = movies
+                            mediaName = "Movies"
+                            break
+                        case "2":
+                            mediaType = tvShows
+                            mediaName = "Tv Shows"
+                            break
+                        case "3":
+                            mediaType = movies_and_tvShows
+                            mediaName = "Movies and Tv Shows"
+                            break
+                        case _:
+                            print("Invalid input. Please try again.")
+                        
+                while True:
+                    categoryRanking = input("\nHow would you like to sort the top 10 movies/tv shows?\n1. Rating\n2. Number of voters\n\nPlease type in the corresponding number for the option chosen.")
+                    
+                    match categoryRanking:
+                        
+                            case "1":
+                                sortValue = "averageRating"
+                                break
+                            
+                            case "2":
+                                sortValue = "numVotes"
+                                break
+                            case _:
+                                print("Invalid input. Please try again.")
+                
+                while True:
+                    numberOfEntries = input(f"\nHow many {mediaName} would you like to list?\nPlease type in an integer.")
+                    
+                    try: 
+                        numberOfEntries = int(numberOfEntries)
+                        break   
+                    except ValueError: 
+                        print("\n---Invalid input, please enter an integer.---")            
+
+                topList = mediaType.sort_values(by=sortValue, ascending=False).head(int(numberOfEntries))
+                print("")
+                print(f"---Top {numberOfEntries} {mediaName} by {sortValue}---")
+                print(topList[["primaryTitle", "averageRating", "numVotes", "startYear"]].to_string(index=False))
+                cont = input("\nPress any key to continue\n")
+                if (cont):
                     askUserInput = True
                 
-                match categoryRanking:
-                    
-                        case "1":
-                            print("\n---Top 10 by Rating---")
-                            print(top10ByRating[["primaryTitle", "averageRating", "numVotes", "startYear"]].to_string(index=False))
-                        case "2":
-                            print("\n---Top 10 by Number of Votes---")
-                            print(top10ByNumberOfVotes[["primaryTitle", "averageRating", "numVotes", "startYear"]].to_string(index=False))
             case "2":
                 print("case 2")
             
