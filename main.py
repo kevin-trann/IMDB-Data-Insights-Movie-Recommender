@@ -1,4 +1,6 @@
+from fuzzywuzzy import process
 import pandas as pd
+
 movies_and_tvShows = pd.read_csv("imdb_popular_dataset.csv")
 movies_and_tvShows = movies_and_tvShows[movies_and_tvShows['numVotes'] >= 50000]
 
@@ -17,13 +19,11 @@ while True:
     if (intro):
         print("---Movie Recommender by Kevin Tran---\n")
         intro = False
-    
-    
+        
     if (askUserInput):
         value = input("\nWhat would you like to do?\n\n1.List top movies/tv shows in a chosen category\n2.Recommend a movie based on input\n3.Info about a movie\n\nPlease type in the corresponding number for the option chosen.")
         askUserInput = False
        
-    
         match value:
             case "1":
                 
@@ -83,4 +83,25 @@ while True:
                 print("case 2")
             
             case "3":
-                print("case 3")
+                
+                while True:
+                    search = input("\nWhich movie/tv show would you like to search up info for?")
+                    titles = movies_and_tvShows['primaryTitle']
+                    bestMatch = process.extractOne(search, titles)
+                    
+                    if bestMatch:
+                        movieId = bestMatch[0]
+                        print("")
+                        print(movies_and_tvShows[movies_and_tvShows['primaryTitle'] == movieId][["primaryTitle", "averageRating", "numVotes", "startYear"]])
+                        
+                        cont = input("\nPress any key to continue\n")
+                        if (cont):
+                            askUserInput = True
+                            break
+                    
+                    else:
+                        print("\nNo results. Please try again.")
+                        
+                    cont = input("\nPress any key to continue\n")
+                    
+                    
