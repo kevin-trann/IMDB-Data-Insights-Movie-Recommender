@@ -17,11 +17,11 @@ askUserInput = True
 
 while True:
     if (intro):
-        print("---Movie Recommender by Kevin Tran---\n")
+        print("---IMDB Data Insights & Movie Recommender by Kevin Tran---\n")
         intro = False
         
     if (askUserInput):
-        value = input("\nWhat would you like to do?\n\n1.List top movies/tv shows in a chosen category\n2.Recommend a movie based on input\n3.Info about a movie\n\nPlease type in the corresponding number for the option chosen.")
+        value = input("\nWhat would you like to do?\n\n1.List top movies/tv shows in a chosen category\n2.Recommend a title based on input\n3.Info about a title\n\nPlease type in the corresponding number for the option chosen.")
         askUserInput = False
        
         match value:
@@ -80,8 +80,53 @@ while True:
                     askUserInput = True
                 
             case "2":
-                print("case 2")
-            
+                while True:
+                    reference = input("\nWhat movie or TV Show do you want recommendations based on?")
+                    titles = movies_and_tvShows['primaryTitle']
+                    bestMatch = process.extractOne(reference, titles)
+                    
+                    if bestMatch:
+                        movieId = bestMatch[0]
+                        chosenDataset = movies_and_tvShows['primaryTitle'] == movieId
+                        chosenTitle = (movies_and_tvShows[chosenDataset]["primaryTitle"].values[0])
+                        print("")
+                        print(f"Your chosen movie is {chosenTitle}")
+                        
+                        chosenYear = (movies_and_tvShows[chosenDataset]["startYear"].values[0])
+                        minYear = int(chosenYear) - 10
+                        maxYear = int(chosenYear) + 10
+                        
+                        chosenGenres = (movies_and_tvShows[chosenDataset]['genres'].values[0])
+                        chosenGenresList = chosenGenres.split(",")
+                        
+                        while True:
+                            numberOfEntries = input(f"\nHow many recommendations would you like to be recommended?\nPlease type in an integer.")
+                            
+                            try: 
+                                numberOfEntries = int(numberOfEntries)
+                                break   
+                            except ValueError: 
+                                print("\n---Invalid input, please enter an integer.---")   
+                                
+                        recommendations = movies_and_tvShows.copy()[
+                        (movies_and_tvShows['startYear'] >= minYear) 
+                        & (movies_and_tvShows['startYear'] <= maxYear)
+                        & (movies_and_tvShows['primaryTitle'] != chosenTitle)]
+                        
+                        for genre in chosenGenresList:
+                            recommendations = recommendations[recommendations['genres'].str.contains(genre, na=False)]
+                        
+                        printRecommendations = recommendations.sort_values(by="averageRating", ascending=False).head(int(numberOfEntries))
+                        print(printRecommendations[["primaryTitle", "averageRating", "numVotes", "startYear"]].to_string(index=False))
+                        
+                        cont = input("\nPress any key to continue\n")
+                        if (cont):
+                            askUserInput = True
+                            break
+                        
+                    else:
+                        print("\nNo results. Please try again.")
+                    
             case "3":
                 
                 while True:
@@ -102,6 +147,6 @@ while True:
                     else:
                         print("\nNo results. Please try again.")
                         
-                    cont = input("\nPress any key to continue\n")
+                    
                     
                     
