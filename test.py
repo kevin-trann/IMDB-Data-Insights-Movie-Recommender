@@ -11,16 +11,17 @@ tvShows = movies_and_tvShows[movies_and_tvShows['titleType'].isin(["tvSeries", "
 sortValue = ""
 mediaType = ""
 mediaName = ""
+ascendingOrder = False
 
 st.title("IMDB Data Insights & Movie Recommender by Kevin Tran")
 
-st.write("This project only contains titles from 1980-2024 that have more than 50,000 votes on IMDB.")
+st.write("This project only contains titles from 1980-2025 that have more than 50,000 votes on IMDB.")
 
 askUserInput = st.selectbox("What would you like to do?", ["", "List top movies/tv shows in a chosen category", "Recommend a title based on input", "Info about a title"])
 
 if askUserInput == "List top movies/tv shows in a chosen category":
     
-    askMediaType = st.selectbox("What media type would you like to sort by?", ["Movies", "Tv Shows", "Both"])
+    askMediaType = st.selectbox("What type of media would you like to sort?", ["Movies", "Tv Shows", "Both"])
     
     if askMediaType == "Movies":
         mediaType = movies
@@ -35,27 +36,65 @@ if askUserInput == "List top movies/tv shows in a chosen category":
         mediaName = "Movies and Tv Shows"
      
         
-    sortingMethod = st.selectbox(f"How would you like to sort the titles by?", ["Rating", "Number of Votes"])
+    sortingMethod = st.selectbox(f"How would you like to sort the titles by?", ["Rating", "Number of Votes", "Year of Release", "Alphabetical Order"])
     
     if sortingMethod == "Rating":
         sortValue = "averageRating"
         
     elif sortingMethod == "Number of Votes":
         sortValue = "numVotes"
+    
+    elif sortingMethod == "Year of Release":
+        sortValue = "startYear"
+        
+    elif sortingMethod == "Alphabetical Order":
+        sortValue = "primaryTitle"
         
     numberOfEntries = st.number_input("How many titles would you like to list? Please type an integer.",
     min_value=1,
-    max_value=50,
+    max_value=100,
     value=5,
     step=1 
     )
     
+    if sortingMethod == "Rating" or sortingMethod == "Number of Votes":
+    
+        rankingOrder = st.selectbox("What order would you like to display the data?", ["Highest to Lowest", "Lowest to Highest"])
+        
+        if rankingOrder == "Highest to Lowest":
+            ascendingOrder = False
+        
+        elif rankingOrder == "Lowest to Highest":
+            ascendingOrder = True
+    
+    if sortingMethod == "Year of Release":
+        
+        rankingOrder = st.selectbox("What order would you like to display the data?", ["Chronological Order", "Reverse Chronological Order"])
+        
+        if rankingOrder == "Chronological Order":
+            ascendingOrder = True
+            
+        elif rankingOrder == "Reverse Chronological Order":
+            ascendingOrder = False
+    
+    if sortingMethod == "Alphabetical Order":
+        
+        rankingOrder = st.selectbox("What order would you like to display the data?", ["A-Z", "Z-A"])
+        
+        if rankingOrder == "A-Z":
+            ascendingOrder = True
+        
+        elif rankingOrder == "Z-A":
+            ascendingOrder = False
+    
     if st.button("Run"):
-        topList = mediaType.sort_values(by=sortValue, ascending=False).head(int(numberOfEntries))
+        topList = mediaType.sort_values(by=sortValue, ascending=ascendingOrder).head(int(numberOfEntries))
         topList = (topList[["primaryTitle", "averageRating", "numVotes", "startYear"]].reset_index(drop=True))
         topList.index = topList.index + 1
         st.header(f"Top {mediaName} by {sortingMethod}")
         st.dataframe(topList)
+   
+        
         
 elif askUserInput == "Recommend a title based on input":
     st.write("2")
