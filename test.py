@@ -57,10 +57,13 @@ if askUserInput == "List top movies/tv shows in a chosen category":
         st.header(f"Top {mediaName} by {sortingMethod}")
         st.dataframe(topList)
         
-            
-    
-    
 elif askUserInput == "Recommend a title based on input":
     st.write("2")
+    
 elif askUserInput == "Info about a title":
-    st.write("3")
+    titles = movies_and_tvShows['primaryTitle']
+    search = st.text_input("Which title would you like to search up info for?")
+    if st.button("Search"):
+        bestMatch = process.extractOne(search, titles)
+        movieId = bestMatch[0]
+        st.dataframe(movies_and_tvShows[movies_and_tvShows['primaryTitle'] == movieId][["primaryTitle", "averageRating", "numVotes", "startYear"]])
