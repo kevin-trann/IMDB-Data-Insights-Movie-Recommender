@@ -1,6 +1,7 @@
 from fuzzywuzzy import process
 import pandas as pd
 import streamlit as st
+import random
 
 movies_and_tvShows = pd.read_csv("imdb_popular_dataset.csv")
 movies_and_tvShows = movies_and_tvShows[movies_and_tvShows['numVotes'] >= 50000]
@@ -17,7 +18,7 @@ st.title("IMDB Data Insights & Movie Recommender by Kevin Tran")
 
 st.write("This project only contains titles from 1980-2025 that have more than 50,000 votes on IMDB.")
 
-askUserInput = st.selectbox("What would you like to do?", ["", "List top movies/tv shows in a chosen category", "Recommend a title based on input", "Info about a title"])
+askUserInput = st.selectbox("What would you like to do?", ["", "Recommend a title based on input", "List top movies/tv shows in a chosen category", "Info about a title"])
 
 if askUserInput == "List top movies/tv shows in a chosen category":
     
@@ -99,6 +100,7 @@ if askUserInput == "List top movies/tv shows in a chosen category":
 elif askUserInput == "Recommend a title based on input":
     titles = movies_and_tvShows['primaryTitle']
     chosenTitle = st.text_input("Which title do you want recommendations based on?")
+        
     
     numberOfEntries = st.number_input("How many titles would you like to be recommended? Please type an integer.",
         min_value=1,
@@ -109,6 +111,7 @@ elif askUserInput == "Recommend a title based on input":
     
     if st.button("Recommend"):
         bestMatch = process.extractOne(chosenTitle, titles)
+        st.info(bestMatch[0])
         movieId = bestMatch[0]
         chosenDataset = movies_and_tvShows['primaryTitle'] == movieId
         
@@ -125,9 +128,12 @@ elif askUserInput == "Recommend a title based on input":
             & (movies_and_tvShows['startYear'] <= maxYear)
             & (movies_and_tvShows['primaryTitle'] != chosenTitle)]
         
+        selectionPool = numberOfEntries * 3
+        
         for genre in chosenGenresList:
             recommendations = recommendations[recommendations['genres'].str.contains(genre, na=False)]
-            printRecommendations = recommendations.sort_values(by="averageRating", ascending=False).head(int(numberOfEntries))
+            printRecommendations = recommendations.sort_values(by="averageRating", ascending=False).head(int(selectionPool))
+            printRecommendations = printRecommendations.sample(n=numberOfEntries)
         st.dataframe(printRecommendations[["primaryTitle", "averageRating", "numVotes", "startYear"]])   
     
 elif askUserInput == "Info about a title":
@@ -135,5 +141,6 @@ elif askUserInput == "Info about a title":
     search = st.text_input("Which title would you like to search up info for?")
     if st.button("Search"):
         bestMatch = process.extractOne(search, titles)
+        st.info(bestMatch[0])
         movieId = bestMatch[0]
         st.dataframe(movies_and_tvShows[movies_and_tvShows['primaryTitle'] == movieId][["primaryTitle", "titleType", "genres", "averageRating", "numVotes", "startYear"]])
