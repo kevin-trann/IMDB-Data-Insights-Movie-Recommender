@@ -4,7 +4,7 @@ import streamlit as st
 import random
 
 movies_and_tvShows = pd.read_csv("imdb_popular_dataset.csv")
-movies_and_tvShows = movies_and_tvShows[movies_and_tvShows['numVotes'] >= 50000]
+movies_and_tvShows = movies_and_tvShows[movies_and_tvShows['numVotes'] >= 25000]
 
 movies = movies_and_tvShows[movies_and_tvShows['titleType'] == "movie"]
 tvShows = movies_and_tvShows[movies_and_tvShows['titleType'].isin(["tvSeries", "tvMiniSeries"])]
