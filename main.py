@@ -1,7 +1,10 @@
 from fuzzywuzzy import process
 import pandas as pd
 import streamlit as st
-import random
+import pathlib
+
+st.markdown('<style>' + open('styles.css').read() + '</style>', unsafe_allow_html=True)
+
 
 movies_and_tvShows = pd.read_csv("imdb_popular_dataset.csv")
 movies_and_tvShows = movies_and_tvShows[movies_and_tvShows['numVotes'] >= 25000]
@@ -14,9 +17,9 @@ mediaType = ""
 mediaName = ""
 ascendingOrder = False
 
-st.title("IMDB Data Insights & Movie Recommender by Kevin Tran")
-
-st.write("This project only contains titles from 1980-2025 that have more than 50,000 votes on IMDB.")
+with st.container(key="title"):
+    st.title("🍿IMDB Data Insights & Movie Recommender by Kevin Tran")
+    st.write("This project only contains titles from 1980-2025 that have more than 50,000 votes on IMDB.")
 
 askUserInput = st.selectbox("What would you like to do?", ["", "Recommend a title based on input", "List top movies/tv shows in a chosen category", "Info about a title"])
 
