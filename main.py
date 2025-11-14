@@ -17,11 +17,10 @@ mediaType = ""
 mediaName = ""
 ascendingOrder = False
 
-with st.container(key="title"):
-    st.title("🍿IMDB Data Insights & Movie Recommender by Kevin Tran")
-    st.write("This project only contains titles from 1980-2025 that have more than 50,000 votes on IMDB.")
+st.title("🍿IMDB Data Insights & Movie Recommender by Kevin Tran")
+st.write("This project only contains titles from 1980-2025 that have more than 50,000 votes on IMDB.")
 
-askUserInput = st.selectbox("What would you like to do?", ["", "Recommend a title based on input", "List top movies/tv shows in a chosen category", "Info about a title"])
+askUserInput = st.selectbox("What would you like to do?", ["", "Recommend a title based on input", "List top movies/tv shows in a chosen category", "Info about a title"],key="sel")
 
 if askUserInput == "List top movies/tv shows in a chosen category":
     

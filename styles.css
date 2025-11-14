@@ -8,13 +8,31 @@
     font-style: normal;
 }
 
-.st-key-title{
-    font-weight: 100;
+#imdb-data-insights-and-movie-recommender-by-kevin-tran{
+    font-size: 2rem;
+    font-weight: 300;
     font-style: normal;
     text-align: center;
     font-family:'Roboto';
-    font-size: 100px;
+    
 }
+
+p{
+    font-weight:200;
+    text-align: center;
+    font-size:1rem;
+}
+
+.st-ak\ st-al\ st-bd\ st-be\ st-bf\ st-as\ st-bg\ st-bh\ st-ar\ st-bi\ st-bj\ st-bk\ st-bl{
+    background-color: aqua;
+    color:white;
+}
+
+.st-key-sel input:focus{
+    border: 2px solid red;
+    
+}
+
 
 
 
