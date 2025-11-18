@@ -9,7 +9,7 @@ st.markdown('<style>' + open('styles.css').read() + '</style>', unsafe_allow_htm
 movies_and_tvShows = pd.read_csv("imdb_popular_dataset.csv")
 movies_and_tvShows = movies_and_tvShows[movies_and_tvShows['numVotes'] >= 25000]
 movies_and_tvShows["IMDB Link"] = movies_and_tvShows["tconst"].apply(
-    lambda x: f'<a href="https://www.imdb.com/title/{x}/" target="_blank">IMDB</a>'
+    lambda x: f'<a href="https://www.imdb.com/title/{x}/" target="_blank">https://imdb.com/title/{x}/</a>'
 )
 
 movies = movies_and_tvShows[movies_and_tvShows['titleType'] == "movie"]
@@ -95,11 +95,11 @@ if askUserInput == "List top movies/tv shows in a chosen category":
     
     if st.button("Run"):
         topList = mediaType.sort_values(by=sortValue, ascending=ascendingOrder).head(int(numberOfEntries))
-        topList = (topList[["primaryTitle", "titleType", "genres", "averageRating", "numVotes", "startYear"]].reset_index(drop=True))
+        topList = (topList[["primaryTitle", "titleType", "genres", "averageRating", "numVotes", "startYear", "IMDB Link"]].reset_index(drop=True))
         topList.index = topList.index + 1
         st.header(f"Top {mediaName} by {sortingMethod}")
-        st.dataframe(topList)
-   
+        ranking_table = topList[["primaryTitle", "titleType", "genres", "averageRating", "numVotes", "startYear", "IMDB Link"]].to_html(escape=False, index=False)
+        st.write(ranking_table, unsafe_allow_html=True) #find a way to center table and geners and imdb
         
         
 elif askUserInput == "Recommend a title based on input":
@@ -149,4 +149,5 @@ elif askUserInput == "Info about a title":
         bestMatch = process.extractOne(search, titles)
         st.info(bestMatch[0])
         movieId = bestMatch[0]
-        st.dataframe(movies_and_tvShows[movies_and_tvShows['primaryTitle'] == movieId][["primaryTitle", "titleType", "genres", "averageRating", "numVotes", "startYear"]])
+        info_table = movies_and_tvShows[movies_and_tvShows['primaryTitle'] == movieId][["primaryTitle", "titleType", "genres", "averageRating", "numVotes", "startYear", "IMDB Link"]].to_html(escape=False, index=False)
+        st.write(info_table, unsafe_allow_html=True) #find a way to center table and geners and imdb
