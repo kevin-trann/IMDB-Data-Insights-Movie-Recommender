@@ -8,6 +8,9 @@ st.markdown('<style>' + open('styles.css').read() + '</style>', unsafe_allow_htm
 
 movies_and_tvShows = pd.read_csv("imdb_popular_dataset.csv")
 movies_and_tvShows = movies_and_tvShows[movies_and_tvShows['numVotes'] >= 25000]
+movies_and_tvShows["IMDB Link"] = movies_and_tvShows["tconst"].apply(
+    lambda x: f'<a href="https://www.imdb.com/title/{x}/" target="_blank">IMDB</a>'
+)
 
 movies = movies_and_tvShows[movies_and_tvShows['titleType'] == "movie"]
 tvShows = movies_and_tvShows[movies_and_tvShows['titleType'].isin(["tvSeries", "tvMiniSeries"])]
@@ -136,7 +139,8 @@ elif askUserInput == "Recommend a title based on input":
             recommendations = recommendations[recommendations['genres'].str.contains(genre, na=False)]
             printRecommendations = recommendations.sort_values(by="averageRating", ascending=False).head(int(selectionPool))
             printRecommendations = printRecommendations.sample(n=numberOfEntries)
-        st.dataframe(printRecommendations[["primaryTitle", "averageRating", "numVotes", "startYear"]])   
+        recommendation_table = printRecommendations[["primaryTitle", "averageRating", "numVotes", "startYear", "IMDB Link"]].to_html(escape=False, index=False)
+        st.write(recommendation_table, unsafe_allow_html=True)
     
 elif askUserInput == "Info about a title":
     titles = movies_and_tvShows['primaryTitle']
