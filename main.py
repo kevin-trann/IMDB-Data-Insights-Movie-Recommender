@@ -12,6 +12,7 @@ movies_and_tvShows = movies_and_tvShows[movies_and_tvShows['numVotes'] >= 25000]
 movies_and_tvShows["IMDB Link"] = movies_and_tvShows["tconst"].apply(
     lambda x: f'<a href="https://www.imdb.com/title/{x}/" target="_blank">https://imdb.com/title/{x}/</a>'
 )
+movies_and_tvShows["startYear"] = movies_and_tvShows["startYear"].astype(int)
 
 movies = movies_and_tvShows[movies_and_tvShows['titleType'] == "movie"]
 tvShows = movies_and_tvShows[movies_and_tvShows['titleType'].isin(["tvSeries", "tvMiniSeries"])]
@@ -100,7 +101,7 @@ if askUserInput == "List top movies/tv shows in a chosen category":
         topList.index = topList.index + 1
         st.header(f"Top {mediaName} by {sortingMethod}")
         ranking_table = topList[["primaryTitle", "titleType", "genres", "averageRating", "numVotes", "startYear", "IMDB Link"]].to_html(escape=False, index=False)
-        st.write(ranking_table, unsafe_allow_html=True) #find a way to center table and geners and imdb
+        st.markdown(f'<div class="center-table">{ranking_table}</div>', unsafe_allow_html=True)
         
         
 elif askUserInput == "Recommend a title based on input":
@@ -141,7 +142,7 @@ elif askUserInput == "Recommend a title based on input":
             printRecommendations = recommendations.sort_values(by="averageRating", ascending=False).head(int(selectionPool))
             printRecommendations = printRecommendations.sample(n=numberOfEntries)
         recommendation_table = printRecommendations[["primaryTitle", "averageRating", "numVotes", "startYear", "IMDB Link"]].to_html(escape=False, index=False)
-        st.write(recommendation_table, unsafe_allow_html=True)
+        st.markdown(f'<div class="center-table">{recommendation_table}</div>', unsafe_allow_html=True)
     
 elif askUserInput == "Info about a title":
     titles = movies_and_tvShows['primaryTitle']
@@ -151,4 +152,4 @@ elif askUserInput == "Info about a title":
         st.info(bestMatch[0])
         movieId = bestMatch[0]
         info_table = movies_and_tvShows[movies_and_tvShows['primaryTitle'] == movieId][["primaryTitle", "titleType", "genres", "averageRating", "numVotes", "startYear", "IMDB Link"]].to_html(escape=False, index=False)
-        st.write(info_table, unsafe_allow_html=True) #find a way to center table and geners and imdb
+        st.markdown(f'<div class="center-table">{info_table}</div>', unsafe_allow_html=True) 
