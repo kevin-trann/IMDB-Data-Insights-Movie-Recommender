@@ -1,3 +1,4 @@
+import fuzzywuzzy
 from fuzzywuzzy import process
 import pandas as pd
 import streamlit as st
